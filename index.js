@@ -37,7 +37,7 @@ const loadFixture = (fixture, done) => {
 }
 
 const loadFixtures = (fixturesPath, useCache, cb) => {
-  if (!cachedFixtures && useCache) {
+  if (!cachedFixtures || !useCache) {
     debugSetup('No cached fixtures loading fixture files from', fixturePath)
     cachedFixtures = {}
     fixturePath = path.join(appRoot, fixturesPath)
