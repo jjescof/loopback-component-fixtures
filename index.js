@@ -36,8 +36,8 @@ const loadFixture = (fixture, done) => {
   })
 }
 
-const loadFixtures = (fixturesPath, cb) => {
-  if (!cachedFixtures) {
+const loadFixtures = (fixturesPath, useCache, cb) => {
+  if (!cachedFixtures || !useCache) {
     debugSetup('No cached fixtures loading fixture files from', fixturePath)
     cachedFixtures = {}
     fixturePath = path.join(appRoot, fixturesPath)
@@ -53,7 +53,8 @@ const setupTestFixtures = (app, options) => {
     loadFixturesOnStartup: false,
     errorOnSetupFailure: false,
     environments: 'test',
-    fixturesPath: '/server/test-fixtures/'
+    fixturesPath: '/server/test-fixtures/',
+    useCache: false,
   }, options)
 
   debug('Loading fixtures with options', options)
@@ -73,7 +74,7 @@ const setupTestFixtures = (app, options) => {
   }
 
   if (options.loadFixturesOnStartup) {
-    loadFixtures(options.fixturesPath, (err) => {
+    loadFixtures(options.fixturesPath, options.useCache, (err) => {
       if (err) debug('Error when loading fixtures on startup:', err)
       if (err && options.errorOnSetupFailure) {
         throw new Error('Failed to load fixtures on startup:', err)
@@ -92,7 +93,7 @@ const setupTestFixtures = (app, options) => {
     /* istanbul ignore else */
     if (!cb) cb = opts
     debug('Loading fixtures')
-    loadFixtures(options.fixturesPath, (errors) => {
+    loadFixtures(options.fixturesPath, options.useCache, (errors) => {
       if (errors) debug('Fixtures failed to load:', errors)
       if (errors && options.errorOnSetupFailure) return cb(errors)
 
